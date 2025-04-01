@@ -1,0 +1,21 @@
+<Display>
+  <Banner>Unraid OS Backup</Banner>
+  <Icon>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup_icon.png</Icon>
+
+  <Section>Backup Settings</Section>
+  <Input name="dest1" type="text" label="Destination 1" placeholder="/mnt/user/backups/unraid-os" />
+  <Input name="dest2" type="text" label="Destination 2" placeholder="/mnt/remotes/dropbox-backup (optional)" />
+  <Input name="retention" type="text" label="Retention Days" placeholder="14" />
+  <Select name="schedule" label="Schedule">
+    <Option value="daily">Daily</Option>
+    <Option value="weekly">Weekly</Option>
+    <Option value="disabled">Disabled</Option>
+  </Select>
+
+  <Button name="run_backup" label="Run Backup Now" />
+
+  <Paragraph>
+    Back up your Unraid OS flash drive automatically.  
+    We recommend using both a **local** and **remote** destination.
+  </Paragraph>
+</Display>
