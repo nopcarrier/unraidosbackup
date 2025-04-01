@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Plugin name="Unraid OS Backup" author="Dan Hammond" version="1.0" 
+        min="6.9.0" max="7.9999" 
+        category="Backup" 
+        icon="https://raw.githubusercontent.com/unraid/icons/master/backup.png">
+
+  <Description>
+    Backup your Unraid OS (USB flash drive) automatically to up to two destinations. Includes retention policy and success/failure notifications.
+  </Description>
+
+  <Settings>
+    <Setting name="Destination 1" key="dest1" default="/mnt/user/backups/unraid-os">
+      Optional local or remote destination folder for backups. Example: /mnt/user/backups/unraid-os
+    </Setting>
+    <Setting name="Destination 2" key="dest2" default="">
+      Optional second backup destination. Example: /mnt/remotes/dropbox-backup
+    </Setting>
+    <Setting name="Retention Days" key="retention" default="14">
+      How many days of backups to keep in each destination.
+    </Setting>
+    <Setting name="Schedule" key="schedule" type="select" default="daily">
+      <Option value="daily">Daily</Option>
+      <Option value="weekly">Weekly</Option>
+      <Option value="disabled">Disabled</Option>
+    </Setting>
+  </Settings>
+
+  <Files>
+    <File>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup.sh</File>
+  </Files>
+
+  <Install>
+    cp unraidosbackup.sh /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.sh
+    chmod +x /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.sh
+    mkdir -p /boot/config/plugins/unraidosbackup
+    echo "dest1=/mnt/user/backups/unraid-os" > /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "dest2=" >> /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "retention=14" >> /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "schedule=daily" >> /boot/config/plugins/unraidosbackup/settings.cfg
+  </Install>
+
+  <Uninstall>
+    rm -rf /usr/local/emhttp/plugins/unraidosbackup
+    rm -f /boot/config/plugins/unraidosbackup/settings.cfg
+  </Uninstall>
+</Plugin>
