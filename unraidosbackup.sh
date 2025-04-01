@@ -1,60 +1,54 @@
-#!/bin/bash
-# Unraid OS Backup Script - v1.0
+<?xml version="2025.03.31" encoding="utf-8"?>
+<Plugin name="Unraid OS Backup" author="Dan Hammond" version="1.0" 
+        min="6.9.0" max="7.9999" 
+        category="Backup" 
+        icon="https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup_icon.png">
 
-# Load settings
-SETTINGS_FILE="/boot/config/plugins/unraidosbackup/settings.cfg"
-[ -f "$SETTINGS_FILE" ] && source "$SETTINGS_FILE"
+  <Description>
+    Backup your Unraid OS (USB flash drive) automatically to up to two destinations. Includes retention policy and success/failure notifications.
+  </Description>
 
-# Validate required settings
-FLASH_DRIVE="/boot"
-DATE=$(date +%Y%m%d_%H%M%S)
-TMP_BACKUP="/tmp/unraid-os-backup-$DATE"
-ZIP_FILE="/tmp/unraid-os-$DATE.zip"
-FAILURE=0
+  <Settings>
+    <Setting name="Destination 1" key="dest1" default="/mnt/user/backups/unraid-os">
+      Optional local or remote destination folder for backups. Example: /mnt/user/backups/unraid-os
+    </Setting>
+    <Setting name="Destination 2" key="dest2" default="">
+      Optional second backup destination. Example: /mnt/remotes/dropbox-backup
+    </Setting>
+    <Setting name="Retention Days" key="retention" default="14">
+      How many days of backups to keep in each destination.
+    </Setting>
+    <Setting name="Schedule" key="schedule" type="select" default="daily">
+      <Option value="daily">Daily</Option>
+      <Option value="weekly">Weekly</Option>
+      <Option value="disabled">Disabled</Option>
+    </Setting>
+  </Settings>
 
-# Rsync flash contents
-mkdir -p "$TMP_BACKUP"
-rsync -av "$FLASH_DRIVE/" "$TMP_BACKUP"
-if [ $? -ne 0 ]; then
-  /usr/local/emhttp/webGui/scripts/notify -e "Unraid OS Backup" -s "Backup Failed" -d "Rsync failed." -i "alert"
-  exit 1
-fi
+  <Files>
+    <File>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup.sh</File>
+  </Files>
 
-# Zip backup
-cd "$TMP_BACKUP"
-zip -r "$ZIP_FILE" . > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-  /usr/local/emhttp/webGui/scripts/notify -e "Unraid OS Backup" -s "Backup Failed" -d "Zip process failed." -i "alert"
-  rm -rf "$TMP_BACKUP"
-  exit 1
-fi
-rm -rf "$TMP_BACKUP"
+  <Install>
+    cp unraidosbackup.sh /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.sh
+    chmod +x /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.sh
+    mkdir -p /boot/config/plugins/unraidosbackup
+    echo "dest1=/mnt/user/backups/unraid-os" > /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "dest2=" >> /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "retention=14" >> /boot/config/plugins/unraidosbackup/settings.cfg
+    echo "schedule=daily" >> /boot/config/plugins/unraidosbackup/settings.cfg
+  </Install>
 
-# Function to copy and cleanup
-backup_to_dest() {
-  DEST=$1
-  if [ -n "$DEST" ]; then
-    mkdir -p "$DEST"
-    cp "$ZIP_FILE" "$DEST/"
-    if [ $? -ne 0 ]; then
-      /usr/local/emhttp/webGui/scripts/notify -e "Unraid OS Backup" -s "Backup Failed" -d "Could not copy to $DEST." -i "alert"
-      FAILURE=1
-      return
-    fi
-    find "$DEST" -maxdepth 1 -type f -name "unraid-os-*.zip" -mtime +${retention:-14} -exec rm -f {} \;
-  fi
-}
+  <Uninstall>
+    rm -rf /usr/local/emhttp/plugins/unraidosbackup
+    rm -f /boot/config/plugins/unraidosbackup/settings.cfg
+  </Uninstall>
 
-# Backup to both destinations
-backup_to_dest "$dest1"
-backup_to_dest "$dest2"
-
-# Cleanup temp zip
-rm -f "$ZIP_FILE"
-
-# Notify
-if [ $FAILURE -eq 0 ]; then
-  /usr/local/emhttp/webGui/scripts/notify -e "Unraid OS Backup" -s "Backup Successful" -d "Backup completed to all destinations." -i "normal"
-fi
-
-exit 0
+  <ChangeLog>
+    <Version number="2025.03.31" date="2025-03-31">
+      <Change>Initial release of Unraid OS Backup plugin</Change>
+      <Change>Backup to up to two destinations with retention policy</Change>
+      <Change>Success and failure notifications</Change>
+    </Version>
+  </ChangeLog>
+</Plugin>
