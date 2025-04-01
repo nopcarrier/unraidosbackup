@@ -12,10 +12,9 @@
     <Option value="disabled">Disabled</Option>
   </Select>
 
-  <Button name="run_backup" label="Run Backup Now" action="/plugins/unraidosbackup/unraidosbackup.php" method="post">
-    <Param name="run_backup" value="1" />
-  </Button>
-
+<Button name="run_backup" label="Run Backup Now" action="/plugins/unraidosbackup/unraidosbackup.php" method="post">
+  <Param name="run_backup" value="1" />
+</Button>
 
   <Paragraph>
     Back up your Unraid OS flash drive automatically.  
