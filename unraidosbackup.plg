@@ -28,6 +28,7 @@
   <Files>
     <File>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup.sh</File>
     <File>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup.page</File>
+    <File>https://raw.githubusercontent.com/nopcarrier/unraidosbackup/main/unraidosbackup.php</File>
   </Files>
 
   <Install>
@@ -39,6 +40,8 @@
     echo "retention=14" >> /boot/config/plugins/unraidosbackup/settings.cfg
     echo "schedule=daily" >> /boot/config/plugins/unraidosbackup/settings.cfg
   cp unraidosbackup.page /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.page
+  cp unraidosbackup.page /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.page
+  cp unraidosbackup.php /usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.php
   </Install>
 
   <Uninstall>
