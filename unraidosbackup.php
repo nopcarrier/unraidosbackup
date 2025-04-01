@@ -3,8 +3,16 @@
 
 $cfgFile = "/boot/config/plugins/unraidosbackup/settings.cfg";
 
-// Save settings
+// Handle POST requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Run backup now
+  if (isset($_POST['run_backup'])) {
+    exec("/usr/local/emhttp/plugins/unraidosbackup/unraidosbackup.sh > /dev/null 2>&1 &");
+    echo "Backup started!";
+    exit;
+  }
+
+  // Save settings
   $dest1 = escapeshellarg($_POST['dest1'] ?? '');
   $dest2 = escapeshellarg($_POST['dest2'] ?? '');
   $retention = escapeshellarg($_POST['retention'] ?? '14');
@@ -19,6 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit;
 }
 
-// Load settings
+// Handle GET (load settings)
 $settings = @parse_ini_file($cfgFile);
 echo json_encode($settings);
